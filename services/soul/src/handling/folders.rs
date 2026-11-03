@@ -1,0 +1,208 @@
+//! Хендлеры `folders.*` (`05 §1.2`, `11 §3`): операции только хозяину.
+
+use eva_protocol::{
+    errors::{self, Aux, AuxResult, ext::*},
+    requests::{
+        Folders::{create, delete, list, update},
+        Patch, Response,
+    },
+};
+
+use crate::{
+    components::Components,
+    convert,
+    db::{
+        Db as _, Queries as _,
+        folders::{FolderRow, UNSORTED},
+        stats::Metric,
+    },
+    handling::text,
+    state::{Policy, State},
+};
+
+fn check_name(name: &str) -> AuxResult<()> {
+    let ok = !name.trim().is_empty() && !name.chars().any(char::is_control);
+    ok.true_or(Aux::Invalid(
+        "folder name must be a non-empty single line".into(),
+    ))?;
+    text::chars("folder name", name, text::NAME_MAX)
+}
+
+pub(crate) fn check_compact_at(compact_at: Option<f32>) -> AuxResult<()> {
+    compact_at
+        .is_none_or(|v| v > 0.0 && v <= 1.0)
+        .true_or(Aux::Invalid("compact_at must be in (0, 1]".into()))
+}
+
+#[eva::endpoint(create)]
+pub async fn Create<C: Components>(state: &mut State<C>, args: this::Args) -> this::Output {
+    let State { shared, caller, .. } = state;
+    Policy::new(caller).owner()?;
+    let this::Args { surface, name } = args;
+    check_name(&name)?;
+
+    let row = shared
+        .db()
+        .write(move |tx| -> Response<FolderRow, this::Err> {
+            tx.surfaces()
+                .get(&surface)?
+                .ok_or_else(|| Aux::NotFound(format!("surface {surface}")))?;
+            if tx.folders().by_name(&surface, &name)?.is_some() {
+                return Err(errors::folders::NameTaken { surface, name }.spec());
+            }
+            let id = tx.folders().insert(&surface, &name)?;
+            Ok(tx
+                .folders()
+                .get(id)?
+                .ok_or_else(|| Aux::internal("folder vanished right after insert"))?)
+        })
+        .await?;
+
+    log::info!(folder:% = row.id, surface:% = row.surface.id, caller = caller.label(); "folder created");
+    Ok(this::Ok {
+        folder: convert::folder::from_db(row),
+    })
+}
+
+#[eva::endpoint(update)]
+pub async fn Update<C: Components>(state: &mut State<C>, args: this::Args) -> this::Output {
+    let State { shared, caller, .. } = state;
+    Policy::new(caller).owner()?;
+    let this::Args { folder, update } = args;
+
+    let (row, crossed) = shared
+        .db()
+        .write(move |tx| -> Response<(FolderRow, usize), this::Err> {
+            let mut row = tx
+                .folders()
+                .get(folder)?
+                .ok_or_else(|| errors::folders::NotFound { folder }.spec())?;
+            let this::Update {
+                name,
+                trusted,
+                model,
+                effort,
+                thinking,
+                compact_at,
+            } = update;
+
+            if let Patch::Change(name) = name
+                && name != row.name
+            {
+                if row.builtin {
+                    return Err(errors::folders::Builtin { folder }.spec());
+                }
+                check_name(&name)?;
+                if tx.folders().by_name(&row.surface.id, &name)?.is_some() {
+                    return Err(errors::folders::NameTaken {
+                        surface: row.surface.id,
+                        name,
+                    }
+                    .spec());
+                }
+                row.name = name;
+            }
+            let before = match trusted {
+                Patch::Change(trusted) if trusted != row.trusted => {
+                    row.trusted = trusted;
+                    tx.chats().inherited_trust(folder)?
+                }
+                _ => Vec::new(),
+            };
+            if let Patch::Change(model) = model {
+                row.model = model;
+            }
+            if let Patch::Change(effort) = effort {
+                row.effort = effort;
+            }
+            if let Patch::Change(thinking) = thinking {
+                row.thinking = thinking;
+            }
+            if let Patch::Change(compact_at) = compact_at {
+                check_compact_at(compact_at)?;
+                row.compact_at = compact_at;
+            }
+
+            tx.folders().save(&row)?;
+            let crossed = tx.chats().reset_crossed(&before)?;
+            Ok((row, crossed.len()))
+        })
+        .await?;
+
+    log::info!(folder:% = row.id, crossed, caller = caller.label(); "folder updated");
+    Ok(this::Ok {
+        folder: convert::folder::from_db(row),
+    })
+}
+
+#[eva::endpoint(delete)]
+pub async fn Delete<C: Components>(state: &mut State<C>, args: this::Args) -> this::Output {
+    let State {
+        shared,
+        world,
+        caller,
+        ..
+    } = state;
+    Policy::new(caller).owner()?;
+    let this::Args { folder } = args;
+
+    let (now, zone) = (world.now(), shared.day_zone());
+    let (moved, crossed) = shared
+        .db()
+        .write(move |tx| -> Response<(u64, usize), this::Err> {
+            let row = tx
+                .folders()
+                .get(folder)?
+                .ok_or_else(|| errors::folders::NotFound { folder }.spec())?;
+            if row.builtin {
+                return Err(errors::folders::Builtin { folder }.spec());
+            }
+            let unsorted = tx
+                .folders()
+                .by_name(&row.surface.id, UNSORTED)?
+                .ok_or_else(|| {
+                    Aux::internal(format!("surface {} has no Unsorted", row.surface.id))
+                })?;
+            let before = tx.chats().inherited_trust(folder)?;
+            let moved = tx.folders().move_chats(folder, unsorted.id)?;
+            tx.folders().delete(folder)?;
+            // Перенос в Unsorted — тот же `chats.move`, только без `confirm`.
+            let crossed = tx.chats().reset_crossed(&before)?;
+            for _ in &crossed {
+                tx.stats().bump(Metric::ChatsTrustMoves, "", now, &zone)?;
+            }
+            Ok((moved, crossed.len()))
+        })
+        .await?;
+
+    log::info!(folder:% = folder, moved, crossed, caller = caller.label(); "folder deleted");
+    Ok(this::Ok { moved })
+}
+
+#[eva::endpoint(list)]
+pub async fn List<C: Components>(state: &mut State<C>, args: this::Args) -> this::Output {
+    let State {
+        shared,
+        caller,
+        db_conn,
+        ..
+    } = state;
+    Policy::new(caller).owner()?;
+    let this::Args {
+        surface,
+        limit,
+        after,
+    } = args;
+
+    let db = db_conn.acquire(shared).await?;
+    let rows = db
+        .run(move |c| {
+            c.folders()
+                .list(surface.as_ref(), after, limit.into_inner())
+        })
+        .await?;
+
+    Ok(this::Ok {
+        found: rows.into_iter().map(convert::folder::from_db).collect(),
+    })
+}

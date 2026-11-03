@@ -1,0 +1,43 @@
+[package]
+name = "eva-rpc"
+version.workspace = true
+edition.workspace = true
+description = "Eva RPC: msgpack frames over unix/ws/wss and a JSON-RPC bridge over http/https for clients, Noise-encrypted uds/tcp for services, server dispatcher and client session over the library traits."
+
+[dependencies]
+eva-protocol.workspace = true
+eva-core.workspace = true
+eva = { workspace = true, features = ["tokio"] }
+serde.workspace = true
+serde_json.workspace = true
+rmp-serde.workspace = true
+rmp.workspace = true
+futures.workspace = true
+bytes.workspace = true
+pin-project-lite.workspace = true
+async-stream.workspace = true
+log.workspace = true
+fastrace.workspace = true
+tokio.workspace = true
+tokio-util.workspace = true
+tokio-tungstenite.workspace = true
+http.workspace = true
+http-body-util.workspace = true
+hyper.workspace = true
+hyper-util.workspace = true
+tokio-rustls.workspace = true
+rustls.workspace = true
+rustls-pemfile.workspace = true
+webpki-roots.workspace = true
+snow.workspace = true
+socket2.workspace = true
+hkdf.workspace = true
+sha2.workspace = true
+
+[dev-dependencies]
+reqwest.workspace = true
+tempfile.workspace = true
+proptest.workspace = true
+
+[lints]
+workspace = true

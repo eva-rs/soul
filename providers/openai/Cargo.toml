@@ -1,0 +1,28 @@
+[package]
+name = "eva-provider-openai"
+version.workspace = true
+edition.workspace = true
+description = "OpenAI-compatible Chat Completions (OpenRouter first) behind the Provider trait."
+
+[dependencies]
+eva-protocol.workspace = true
+eva-core.workspace = true
+eva.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+futures.workspace = true
+bytes.workspace = true
+log.workspace = true
+tokio.workspace = true
+reqwest.workspace = true
+eventsource-stream.workspace = true
+base64.workspace = true
+
+[dev-dependencies]
+insta.workspace = true
+proptest.workspace = true
+rustls.workspace = true
+tempfile.workspace = true
+
+[lints]
+workspace = true
