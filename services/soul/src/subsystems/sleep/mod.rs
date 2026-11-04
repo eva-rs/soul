@@ -4,7 +4,7 @@
 
 use std::sync::Arc;
 
-use eva::{data, supervisor::SlaveRx, time::Timestamp};
+use eva::{data, rt::components::SlaveRx, time::Timestamp};
 use tokio::time::MissedTickBehavior;
 use tokio_util::sync::CancellationToken;
 
@@ -578,7 +578,7 @@ impl<C: Components, E: SleepTurns<C> + WarmSets + 'static> Sleep<C, E> {
             .await
     }
 
-    /// Компонент `Supervisor`: `Shutdown` посреди ночи отменяет текущий тур
+    /// Фоновый компонент: `Shutdown` посреди ночи отменяет текущий тур
     /// штатно и ждёт конца ночи.
     pub async fn run(self, mut rx: SlaveRx) -> eyre::Result<()> {
         if let Err(e) = self.recover().await {

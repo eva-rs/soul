@@ -1,6 +1,6 @@
 # SDK модулей
 
-`eva-sdk` — модуль для soul на Rust поверх `eva-rpc`: handshake, смена соединения с продолжением сессии, обработчики вызовов от soul (тулы, хуки, события, провайдер) и клиент `Soul`, который реализует то же [библиотечное API](api.md), что и сам soul. `module!().run()` берёт на себя конфиг, runtime и `Supervisor` фреймворка `eva`. Провод, который SDK прячет, описан в [Протоколе модулей](protocol.md).
+`eva-sdk` — модуль для soul на Rust поверх `eva-rpc`: handshake, смена соединения с продолжением сессии, обработчики вызовов от soul (тулы, хуки, события, провайдер) и клиент `Soul`, который реализует то же [библиотечное API](api.md), что и сам soul. `module!().run()` берёт на себя конфиг, runtime и `Components` фреймворка `eva`. Провод, который SDK прячет, описан в [Протоколе модулей](protocol.md).
 
 Модуль бывает двух видов, и вид задаёт, кто звонит:
 
@@ -56,7 +56,7 @@ module:
 
 `RUNTIME_DIRECTORY` должен задавать один абсолютный каталог; несколько каталогов требуют явного `module.listen`. Каталог и права создаёт окружение. `soul-key` — имя systemd credential с общим ключом Noise; `SecretString::read()` берёт его из `$CREDENTIALS_DIRECTORY/soul-key`. API-ключ внешнего сервиса задаётся отдельно, например `weather.api_key: {credential: owm-api-key}`. Имена credentials — один компонент из букв, цифр, `.`, `_`, `-`, кроме `.` и `..`.
 
-Для встраивания в свой процесс остаются `ServiceConfig::register(app)` и `ClientConfig::register(app)` с обязательной секцией `module`. У явного `ServiceConfig` поля `listen` и `key` обязательны; дефолты выше применяет именно `Module::run`.
+Для встраивания в свой процесс `ServiceConfig::register(cfg)` и `ClientConfig::register(cfg)` добавляют обязательную секцию `module` в `eva::rt::cfg::Builder`. С `Runtime` это `Runtime::default().configure(ServiceConfig::register)`. У явного `ServiceConfig` поля `listen` и `key` обязательны; дефолты выше применяет именно `Module::run`.
 
 Клиент, `ClientConfig`:
 
@@ -89,7 +89,7 @@ module:
 | `init(section, initializer)` | Загружает типизированный конфиг и создаёт состояние при `run` |
 | `state(value)` | Готовое состояние для `listen`, `connect*` или `run`; задаётся до тулов |
 | `translations(include_translations!("locales"))` | Встроенные PO-каталоги |
-| `run()` | Запуск сервиса через `eva::cli::App` и `Supervisor`, остановка по SIGINT/SIGTERM |
+| `run()` | Запуск сервиса через `eva::rt::Runtime` и `Components`, остановка по SIGINT/SIGTERM |
 | `about(text)` | Описание для логов модуля; в `hello` не уходит |
 | `ask(bool)` | Capability `ask`: модуль рисует кнопки pending-запросов в чатах своих surface (клиенту — ещё `local`) |
 | `group(Group<S>)` | Группа с локальными именами тулов и вложенных групп |
@@ -159,7 +159,7 @@ Socket activation: если `LISTEN_PID` — pid модуля, SDK ищет ср
 `Soul = Session<LiveSession>`: те же неймспейсы и форма вызова, что в [Библиотечном API](api.md), и те же права, что у caller'а модуля. Ручку можно клонировать и держать всё время жизни модуля: каждый вызов берёт текущее соединение — после реконнекта клиента и после нового дозвона от soul к сервису тоже.
 
 ```rust
-use eva::handling::CallStep as _;
+use eva::handlers::CallStep as _;
 use eva_sdk::prelude::*;
 use eva_sdk::protocol::requests::Chats;
 

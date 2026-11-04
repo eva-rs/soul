@@ -260,7 +260,7 @@ fn config_defaults_and_hidden_key() {
             .unwrap();
     assert!(matches!(
         file.api_key,
-        Some(eva::utils::SecretString::File(_))
+        Some(eva::rt::cfg::SecretString::File(_))
     ));
 }
 

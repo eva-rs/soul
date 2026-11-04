@@ -1,10 +1,6 @@
 use std::sync::Mutex;
 
-use eva::{
-    cli::{App, NoArgs},
-    component_configs::ComponentConfigs,
-    supervisor::{SlaveRx, Supervisor},
-};
+use eva::rt::{Components, Runtime, cfg::ComponentConfigs, cli::NoArgs, components::SlaveRx};
 use tokio::sync::watch;
 
 use eva_soul::{
@@ -17,7 +13,9 @@ use eva_soul::{
 };
 
 fn main() -> eyre::Result<()> {
-    Config::register(App::default().env_prefix("EVA_")).run(entrypoint)
+    Runtime::default()
+        .configure(|cfg| Config::register(cfg.env_prefix("EVA_")))
+        .run(entrypoint)
 }
 
 async fn entrypoint(_: NoArgs, cfgs: ComponentConfigs) -> eyre::Result<()> {
@@ -34,7 +32,7 @@ async fn entrypoint(_: NoArgs, cfgs: ComponentConfigs) -> eyre::Result<()> {
 
     let (memory_soul, search_soul) = (soul.clone(), soul.clone());
     let (cron_soul, sleep_soul, gc_soul) = (soul.clone(), soul.clone(), soul.clone());
-    let supervisor = Supervisor::new(cfgs)
+    let components = Components::new(cfgs)
         .add::<DbConfig>(move |_, rx| hold_db(soul.clone(), rx, modules_gone.clone()))
         .add::<CronConfig>(move |_, rx| {
             cron::Cron::new(cron_soul.clone(), Driver::new(cron_soul.shared().clone())).run(rx)
@@ -60,7 +58,7 @@ async fn entrypoint(_: NoArgs, cfgs: ComponentConfigs) -> eyre::Result<()> {
                 }
             }
         });
-    supervisor.wait_for_completion().await
+    components.wait_for_completion().await
 }
 
 /// Миграции и сид прошли в `Soul::start`; компонент держит базу до

@@ -6,7 +6,7 @@ mod common;
 use std::sync::atomic::Ordering;
 
 use common::{CLIENT, OTHER, Outcome, SVC, TestSession, client, matrix_callers, outcome, service};
-use eva::handling::CallStep as _;
+use eva::handlers::CallStep as _;
 use eva_protocol::{
     errors::{Aux, Generic},
     requests::Modules::{Trait as _, add, list, remove, token_issue, token_revoke},
@@ -17,7 +17,7 @@ use eva_protocol::{
     wire::{Capabilities, capabilities::ToolsCap},
 };
 
-use eva::utils::SecretString;
+use eva::rt::cfg::SecretString;
 use eva_soul::{
     config::modules::TokenEntry,
     db::{Db as _, Queries as _, modules::TokenRow},

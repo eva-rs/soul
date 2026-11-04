@@ -7,7 +7,7 @@
 
 use std::{collections::BTreeMap, net::IpAddr, time::Duration};
 
-use eva::{data, time::HumanDuration, utils::SecretString};
+use eva::{data, rt::cfg::SecretString, time::HumanDuration};
 use reqwest::Url;
 use serde_json::{Value, json};
 

@@ -6,7 +6,7 @@
 mod common;
 
 use common::{OTHER, Outcome, SVC, TestSession, outcome};
-use eva::handling::CallStep as _;
+use eva::handlers::CallStep as _;
 use eva_protocol::{
     requests::{
         Patch,

@@ -3,7 +3,7 @@
 
 use std::{pin::pin, time::Duration};
 
-use eva::supervisor::SlaveRx;
+use eva::rt::components::SlaveRx;
 use eva_protocol::wire::events::Event;
 use tokio::time::{Instant, MissedTickBehavior};
 
@@ -51,7 +51,7 @@ const fn wakes(event: &Event) -> bool {
     )
 }
 
-/// Компонент `Supervisor`: событие взводит таймер `chats.search.index_delay`
+/// Фоновый компонент: событие взводит таймер `chats.search.index_delay`
 /// (пачка вместо прохода на каждую реплику), страховка — раз в `SWEEP_EVERY`;
 /// до `Shutdown`.
 pub async fn run<C: Components>(shared: Shared<C>, mut rx: SlaveRx) -> eyre::Result<()> {

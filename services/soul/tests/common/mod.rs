@@ -19,9 +19,9 @@ use std::{
 };
 
 use eva::{
+    rt::cfg::SecretString,
     time::{Clock as _, Mock},
     url::Url,
-    utils::SecretString,
 };
 use eva_core::{Caller, SessionMaker as _, service};
 use eva_hands::{Entry, Error, Greeting, Hands, Limits, Output};

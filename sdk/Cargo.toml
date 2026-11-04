@@ -9,7 +9,7 @@ eva-protocol.workspace = true
 eva-core.workspace = true
 eva-rpc.workspace = true
 eva-sdk-macros = { path = "macros" }
-eva = { workspace = true, features = ["yaml", "tokio"] }
+eva = { workspace = true, features = ["cli", "logforth", "yaml"] }
 serde.workspace = true
 serde_json.workspace = true
 eyre.workspace = true

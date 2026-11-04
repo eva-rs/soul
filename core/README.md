@@ -12,7 +12,7 @@
 |---|---|
 | `Session<S>` | неймспейсы (`session.surfaces()`, `.chats()`, …) плюс `caller()` |
 | `SessionMaker` | выдаёт `Session` для `Caller`: soul, RPC-клиент, тестовый мок |
-| `CallStep` | шаг операции (`eva::handling::CallStep`): `call(args)` → `Response<Ok, Err>`; у потока `Ok` — `Items`, у загрузки `Args` несёт `body: ByteStream` |
+| `CallStep` | шаг операции (`eva::handlers::CallStep`): `call(args)` → `Response<Ok, Err>`; у потока `Ok` — `Items`, у загрузки `Args` несёт `body: ByteStream` |
 | `eva_protocol::requests::<Ns>::Trait` | трейт неймспейса из `#[service]` |
 | `for_each_op!` | X-макро плоских метаданных сервисов и их `methods`: по нему собраны RPC-диспетчер, клиент и SDK |
 | `NAMESPACES` | все операции: RPC-метод — `<namespace>.<op>` |
@@ -43,7 +43,7 @@ let Surfaces::get::Ok { surface } = session
 ## Тесты
 
 ```sh
-nix develop -c cargo test -p eva-core
+nix develop -c cargo test --manifest-path core/Cargo.toml
 ```
 
 `tests/namespaces.rs`: RPC-метод raw-операции идёт без `r#`, glob-импорт `prelude` открывает методы неймспейсов у `Session`.

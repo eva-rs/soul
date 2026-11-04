@@ -2,7 +2,7 @@
 
 use std::{collections::BTreeMap, time::Duration};
 
-use eva::{data, time::HumanDuration, utils::SecretString};
+use eva::{data, rt::cfg::SecretString, time::HumanDuration};
 
 use eva_protocol::types::{
     Effort, ModelId,
@@ -16,7 +16,7 @@ pub const OPENROUTER_BASE_URL: &str = "https://openrouter.ai/api/v1";
 pub struct Config {
     /// Корень API без `/chat/completions`.
     pub base_url: String,
-    /// `{plaintext: …}` или `{file: …}` (`eva::utils::SecretString`); файл — например `LoadCredential` systemd.
+    /// `{plaintext: …}` или `{file: …}` (`eva::rt::cfg::SecretString`); файл — например `LoadCredential` systemd.
     pub api_key: Option<SecretString>,
     /// `http://`, `https://` или `socks5://`.
     pub proxy: Option<String>,

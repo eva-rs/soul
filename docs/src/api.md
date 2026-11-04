@@ -16,7 +16,7 @@ let Surfaces::get::Ok { surface } = session
 ```
 
 - `SessionMaker::make_session(caller)` выдаёт `Session<S>`: у soul это `Soul`, у модуля — `Listening::soul()` или `Connected::soul()` (caller фиксирует соединение). Отказ `make_session` — только `Aux`.
-- `session.<ns>()` возвращает `Client<&mut S>`, `.<op>(arguments).await` вызывает операцию. Импорт трейта для такого вызова не нужен. Если `Args` уже собран, используется `.inner_mut().<op>().call(args)` и импорт `eva::handling::CallStep`.
+- `session.<ns>()` возвращает `Client<&mut S>`, `.<op>(arguments).await` вызывает операцию. Импорт трейта для такого вызова не нужен. Если `Args` уже собран, используется `.inner_mut().<op>().call(args)` и импорт `eva::handlers::CallStep`.
 - Операция `chats.move` в Rust — `session.chats().r#move(chat, surface)`.
 
 Каждая операция — модуль `eva_protocol::requests::<Service>::<op>` с тремя типами:
@@ -97,7 +97,7 @@ pub enum Generic<S> {
 `Spec` — атомарные ошибки домена (`eva_protocol::errors::<ns>`), каждая со своим кодом. Примеры: `surfaces::Taken` (`conflict`), `surfaces::BadRules` (`invalid_params`), `chats::NotFound` (`not_found`), `chats::TrustChange` (`conflict`, повторить с `confirm: true`).
 
 ```rust
-use eva::handling::CallStep as _;
+use eva::handlers::CallStep as _;
 use eva_protocol::requests::Chats::{self, Trait as _};
 
 match session.chats().inner_mut().r#move().call(args).await {
@@ -147,7 +147,7 @@ match session.chats().inner_mut().r#move().call(args).await {
 Списки — keyset: `after` — последний элемент прошлой страницы (его id), `limit` — размер страницы. Короткая страница (меньше `limit`) — последняя.
 
 ```rust
-use eva::handling::CallStep as _;
+use eva::handlers::CallStep as _;
 use eva_protocol::requests::Chats::{self, Trait as _};
 
 let mut after = None;

@@ -4,7 +4,7 @@
 
 use std::{collections::BTreeMap, future::Future, sync::Arc, time::Duration};
 
-use eva::utils::SecretString;
+use eva::rt::cfg::SecretString;
 use eva_hands::{Entry, Error, Greeting, Hands, Limits, Output, Psk};
 use eyre::bail;
 

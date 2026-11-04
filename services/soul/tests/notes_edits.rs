@@ -4,7 +4,7 @@ mod common;
 mod turns_support;
 
 use common::Harness;
-use eva::{handling::CallStep as _, time::Clock as _};
+use eva::{handlers::CallStep as _, time::Clock as _};
 use eva_protocol::{
     errors::{Aux, Generic},
     requests::Notes::{Trait as _, history, list, put, restore, snapshot},

@@ -9,7 +9,7 @@ use std::{
     time::Duration,
 };
 
-use eva::{data, supervisor::SlaveRx, time::Timestamp};
+use eva::{data, rt::components::SlaveRx, time::Timestamp};
 use tokio::{sync::Mutex, task::JoinSet, time::MissedTickBehavior};
 
 use eva_core::SessionMaker as _;
@@ -203,7 +203,7 @@ impl<C: Components, T: CronTurns> Cron<C, T> {
         while inflight.join_next().await.is_some() {}
     }
 
-    /// Компонент `Supervisor`; туры в полёте на `Shutdown` обрываются — их
+    /// Фоновый компонент; туры в полёте на `Shutdown` обрываются — их
     /// закроет `recover` следующего старта.
     pub async fn run(self, mut rx: SlaveRx) -> eyre::Result<()> {
         if let Err(e) = self.recover().await {

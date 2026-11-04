@@ -1,6 +1,6 @@
 mod common;
 
-use eva::handling::CallStep as _;
+use eva::handlers::CallStep as _;
 use eva_protocol::{
     requests::Tools::{Trait as _, catalog},
     types::{ChatId, ModuleId, tool::ToolDecl},

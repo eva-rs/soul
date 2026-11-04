@@ -4,7 +4,7 @@
 mod common;
 
 use common::{CLIENT, Harness, SVC, with_modules};
-use eva::handling::CallStep as _;
+use eva::handlers::CallStep as _;
 use eva_protocol::{
     requests::Inference::{self, Trait as _},
     types::{

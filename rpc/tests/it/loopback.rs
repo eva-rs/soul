@@ -4,7 +4,7 @@ use std::time::Duration;
 
 use futures::{StreamExt as _, stream};
 
-use eva::handling::CallStep as _;
+use eva::handlers::CallStep as _;
 use eva_core::{Caller, SessionMaker as _};
 use eva_protocol::{
     errors::{self, Aux, Generic},

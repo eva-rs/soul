@@ -8,9 +8,9 @@ use std::time::Duration;
 
 use common::{CLIENT, Harness, OTHER, Outcome, SVC, outcome};
 use eva::{
-    handling::CallStep as _,
+    handlers::CallStep as _,
+    rt::cfg::SecretString,
     time::{Clock as _, Date, Timestamp},
-    utils::SecretString,
 };
 use eva_protocol::{
     errors::{Aux, Generic},

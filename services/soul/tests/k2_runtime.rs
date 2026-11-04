@@ -8,8 +8,8 @@ use std::{collections::BTreeMap, time::Duration};
 
 use common::{CLIENT, FaultyDb, Harness, OTHER, SVC, service};
 use eva::{
+    rt::cfg::SecretString,
     time::{Clock as _, Timestamp},
-    utils::SecretString,
 };
 use eva_core::Caller;
 

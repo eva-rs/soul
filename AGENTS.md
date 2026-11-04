@@ -18,7 +18,7 @@
 | `protocol/` | `eva-protocol` | типы, `requests/<ns>.rs` (`Args/Ok/Err`), `errors/`, wire; без I/O |
 | `core/` | `eva-core` | `Session`, трейты и `for_each_op!` из списка, `Caller`, `Provider`, `prelude` |
 | `rpc/` | `eva-rpc` | кадры msgpack, клиенты uds/ws/wss, сервисы uds/tcp под Noise (`Psk`, дозвон), пир, сервер-диспетчер, `RpcSession`, `ModuleProvider` |
-| `sdk/` | `eva-sdk` | `module!()` + `Group`/`Tool` + `run` (конфиг, `init`, `Supervisor`); ручной `Module` → `Listening` / `Connected`; `Soul = Session<LiveSession>` (переживает смену соединения) |
+| `sdk/` | `eva-sdk` | `module!()` + `Group`/`Tool` + `run` (конфиг, `init`, `Components`); ручной `Module` → `Listening` / `Connected`; `Soul = Session<LiveSession>` (переживает смену соединения) |
 | `sdk/macros/` | `eva-sdk-macros` | `msg!`, `include_translations!` (PO в бинарь), бинарь `eva-sdk-i18n` (extract/merge) |
 | `providers/{openai,mock}` | `eva-provider-*` | `impl Provider` одного вендора |
 | `providers/all/` | `eva-providers` | `ProviderConfig` (тег `kind`), `AnyProvider`, `build` |
@@ -35,7 +35,7 @@
 
 ## Код
 
-- Фреймворк `eva`: `#[data]` на все типы данных, `eva::time`, `log` с kv (`log::info!(k = v; "msg")`), `eva::cli::App` + `Supervisor` в бинарях.
+- Фреймворк `eva`: `#[data]` на все типы данных, `eva::time`, `log` с kv (`log::info!(k = v; "msg")`), `eva::rt::Runtime` + `Components` в бинарях.
 - Без `unwrap`/`expect` на данных провода, БД и сети; паника — только инвариант.
 - Права и владельца файлов (сокеты, база) код не ставит — только окружение: NixOS-модуль во `flake.nix` (`UMask`, `StateDirectoryMode`) или socket-юнит хоста.
 - Идентификаторы, логи, промпты — английский; комментарии — русский, одна фраза «почему», только неочевидное, без истории.

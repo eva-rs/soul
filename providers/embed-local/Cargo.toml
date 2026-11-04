@@ -7,7 +7,7 @@ description = "Embeddings from a local OpenAI-compatible /v1/embeddings server b
 [dependencies]
 eva-protocol.workspace = true
 eva-core.workspace = true
-eva.workspace = true
+eva = { workspace = true, features = ["rt"] }
 serde.workspace = true
 serde_json.workspace = true
 log.workspace = true

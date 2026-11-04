@@ -4,7 +4,7 @@
 mod common;
 
 use common::{Harness, Outcome, outcome};
-use eva::{handling::CallStep as _, time::Clock as _};
+use eva::{handlers::CallStep as _, time::Clock as _};
 use eva_protocol::{
     errors::{Aux, Generic},
     requests::Agents::{Trait as _, list},

@@ -1,7 +1,7 @@
 //! Сессия soul: `Session<C>(State<C>)` реализует все namespace-трейты
 //! (`impls/`), отдавая шаги поверх хендлеров.
 
-use eva::handling::CallStep;
+use eva::handlers::CallStep;
 use eva_protocol::requests::Response;
 
 use crate::{

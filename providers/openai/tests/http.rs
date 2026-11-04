@@ -10,7 +10,7 @@ use tokio::{
     task::JoinHandle,
 };
 
-use eva::utils::SecretString;
+use eva::rt::cfg::SecretString;
 use eva_core::{GenSink, Provider};
 use eva_protocol::types::{
     ModelId,

@@ -5,7 +5,7 @@ mod common;
 use std::sync::atomic::Ordering;
 
 use common::{Outcome, SVC, TestSession, outcome};
-use eva::handling::CallStep as _;
+use eva::handlers::CallStep as _;
 use eva_protocol::{
     errors::{Generic, folders::NameTaken},
     requests::{

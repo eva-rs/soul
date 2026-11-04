@@ -9,7 +9,7 @@ use std::{
 };
 
 use common::{CountingHands, FaultyDb, Outcome, SVC, outcome, service};
-use eva::handling::CallStep as _;
+use eva::handlers::CallStep as _;
 use eva_core::{Caller, GenSink, Provider, SessionMaker as _, service};
 use eva_hands::Limits;
 use eva_protocol::{

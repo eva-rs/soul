@@ -89,7 +89,7 @@ nix develop -c cargo test --workspace
 
 ### Стиль кода
 
-- Фреймворк `eva`: `#[data]` на все типы данных (serde в `snake_case`), `eva::time`, `log` с ключами (`log::info!(k = v; "msg")`), `eva::cli::App` и `Supervisor` в бинарях.
+- Фреймворк `eva`: `#[data]` на все типы данных (serde в `snake_case`), `eva::time`, `log` с ключами (`log::info!(k = v; "msg")`), `eva::rt::Runtime` и `Components` в бинарях.
 - Никаких `unwrap`/`expect` на данных провода, БД и сети; паника — только нарушенный инвариант.
 - Идентификаторы, логи, промпты — на английском. Комментарии — на русском, одна фраза «почему», только неочевидное, без истории изменений.
 
@@ -116,7 +116,7 @@ flowchart LR
 
 Тестовый харнесс (`services/soul/tests/common/`) собирает `Soul<Test>` на временном каталоге: часы двигает тест, провайдер — `mock`, руки — `Hands::local` в песочнице; отказы БД и рук включаются флагом. Набор подменяемых компонентов задаёт трейт `Components` (`Real` — боевой).
 
-Колбэки `for_each_op!` получают `<accessor> { trait, client, methods: { <method> { flags, lifetimes, args, ok, err, output, docs, … } }, … }`. В matcher списки флагов и lifetimes разделены запятыми; хвосты `$($method_extra:tt)*` и `$($extra:tt)*` принимают новые поля. Реализация метода сохраняет lifetimes через `fn $method<$($lt),*>(&mut self)`. Для ручных шагов, как в транспортном тестовом soul, `eva::handling::step(move |args| async move { … })` превращает замыкание в `CallStep`.
+Колбэки `for_each_op!` получают `<accessor> { trait, client, methods: { <method> { flags, lifetimes, args, ok, err, output, docs, … } }, … }`. В matcher списки флагов и lifetimes разделены запятыми; хвосты `$($method_extra:tt)*` и `$($extra:tt)*` принимают новые поля. Реализация метода сохраняет lifetimes через `fn $method<$($lt),*>(&mut self)`. Для ручных шагов, как в транспортном тестовом soul, `eva::handlers::step(move |args| async move { … })` превращает замыкание в `CallStep`.
 
 ## Vendor lint
 

@@ -14,7 +14,7 @@ use serde::{
     de::value::{Error, MapDeserializer},
 };
 
-use eva::utils::SecretString;
+use eva::rt::cfg::SecretString;
 use eva_core::Provider;
 use eva_protocol::types::{ModelId, generate::EmbedRequest};
 use eva_providers::{AnyProvider, ProviderConfig, build, mock, openai};

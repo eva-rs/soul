@@ -6,7 +6,7 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-use eva::{time::Timestamp, utils::SecretString};
+use eva::{rt::cfg::SecretString, time::Timestamp};
 use eva_protocol::{
     errors::{self, Generic},
     requests::Surfaces::{create, get, update},

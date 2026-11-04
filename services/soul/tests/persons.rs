@@ -5,7 +5,7 @@ mod common;
 use std::collections::BTreeSet;
 
 use common::{Harness, OTHER, Outcome, SVC, TestSession, outcome};
-use eva::handling::CallStep as _;
+use eva::handlers::CallStep as _;
 use eva_protocol::{
     errors::Generic,
     requests::{

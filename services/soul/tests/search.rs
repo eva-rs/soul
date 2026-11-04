@@ -5,7 +5,7 @@
 mod common;
 
 use common::{Harness, Outcome, outcome};
-use eva::{handling::CallStep as _, time::Clock as _};
+use eva::{handlers::CallStep as _, time::Clock as _};
 use eva_core::Provider as _;
 use eva_protocol::{
     requests::Chats::{Trait as _, search as op},

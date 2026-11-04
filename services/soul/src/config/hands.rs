@@ -3,7 +3,7 @@
 
 use std::{collections::BTreeMap, path::PathBuf, time::Duration};
 
-use eva::{data, time::HumanDuration, utils::SecretString};
+use eva::{data, rt::cfg::SecretString, time::HumanDuration};
 use eva_hands::Limits;
 
 #[data]

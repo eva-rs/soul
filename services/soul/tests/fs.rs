@@ -9,7 +9,7 @@ use std::path::PathBuf;
 use common::{
     Harness, OTHER, Outcome, SVC, TestSession, matrix_callers, outcome, service, with_modules,
 };
-use eva::{bytesize::ByteSize, handling::CallStep as _};
+use eva::{bytesize::ByteSize, handlers::CallStep as _};
 use eva_protocol::{
     errors::{Aux, Generic},
     requests::{

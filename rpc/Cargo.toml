@@ -7,7 +7,7 @@ description = "Eva RPC: msgpack frames over unix/ws/wss and a JSON-RPC bridge ov
 [dependencies]
 eva-protocol.workspace = true
 eva-core.workspace = true
-eva = { workspace = true, features = ["tokio"] }
+eva = { workspace = true, features = ["rt"] }
 serde.workspace = true
 serde_json.workspace = true
 rmp-serde.workspace = true

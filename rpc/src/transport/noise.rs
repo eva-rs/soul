@@ -9,7 +9,7 @@ use std::{
     task::{Context, Poll, ready},
 };
 
-use eva::{data, utils::SecretString};
+use eva::{data, rt::cfg::SecretString};
 use hkdf::Hkdf;
 use sha2::Sha256;
 use snow::{Builder, HandshakeState, TransportState};

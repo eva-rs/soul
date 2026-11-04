@@ -1,13 +1,12 @@
 //! Конфиг soul: по секции на компонент (`00 §5`). Каждая секция
-//! регистрируется в `eva::cli::App` отдельно; `Config` собирает их для
-//! `Soul::start`, поэтому тесты строят его литералом без `App`.
+//! регистрируется в `eva::rt::cfg::Builder` отдельно; `Config` собирает их
+//! для `Soul::start`, поэтому тесты строят его литералом без загрузчика.
 
 use std::path::PathBuf;
 
 use eva::{
-    cli::App,
-    component_configs::{ComponentConfigs, IsComponentConfig},
     data,
+    rt::cfg::{self, ComponentConfigs, IsComponentConfig},
 };
 
 pub mod chats;
@@ -35,7 +34,7 @@ pub use self::{
     system::SystemConfig, tools::ToolsConfig, work::WorkConfig,
 };
 
-/// Все секции soul. `llm` без дефолта (`require`), остальные — `optional`.
+/// Все секции soul. `llm` без дефолта (`required`), остальные — `optional`.
 #[data]
 pub struct Config {
     pub system: SystemConfig,
@@ -57,14 +56,14 @@ pub struct Config {
 }
 
 impl Config {
-    /// Секции для `eva::cli::App`.
-    pub fn register(app: App) -> App {
-        app.optional::<SystemConfig>("system")
+    /// Секции для загрузчика конфигурации.
+    pub fn register(cfg: cfg::Builder) -> cfg::Builder {
+        cfg.optional::<SystemConfig>("system")
             .optional::<DbConfig>("db")
             .optional::<ChatsConfig>("chats")
             .optional::<ContextConfig>("context")
             .optional::<ModulesConfig>("modules")
-            .require::<LlmConfig>("llm")
+            .required::<LlmConfig>("llm")
             .optional::<HandsConfig>("hands")
             .optional::<ToolsConfig>("tools")
             .optional::<WorkConfig>("work")

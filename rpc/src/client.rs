@@ -9,11 +9,11 @@ use std::{
     time::Duration,
 };
 
-use eva::{data, fut::Fut, url::Url};
+use eva::{data, url::Url};
 use futures::{SinkExt as _, Stream, StreamExt as _};
 use serde::{Serialize, de::DeserializeOwned};
 
-use eva::handling::CallStep;
+use eva::handlers::CallStep;
 use eva_core::{
     Caller, Session, SessionMaker,
     service::{AuxFut, op_name},
@@ -384,7 +384,7 @@ where
 {
     type Output = OpResponse<O, E>;
 
-    fn call(&mut self, args: A) -> impl Fut<Output = Self::Output> {
+    fn call(&mut self, args: A) -> impl Future<Output = Self::Output> + Send {
         let client = self.target.inner.clone();
         let method = self.target.method.clone();
         let params = codec::encode(&args);
@@ -411,7 +411,7 @@ where
 {
     type Output = OpResponse<O, E>;
 
-    fn call(&mut self, args: A) -> impl Fut<Output = Self::Output> {
+    fn call(&mut self, args: A) -> impl Future<Output = Self::Output> + Send {
         let wrap = self.wrap;
         let inner = self.target.inner.clone();
         let method = self.target.method.clone();
@@ -475,7 +475,7 @@ where
 {
     type Output = OpResponse<O, E>;
 
-    fn call(&mut self, args: A) -> impl Fut<Output = Self::Output> {
+    fn call(&mut self, args: A) -> impl Future<Output = Self::Output> + Send {
         let (meta, body) = (self.split)(args);
         let client = self.target.inner.clone();
         let method = self.target.method.clone();

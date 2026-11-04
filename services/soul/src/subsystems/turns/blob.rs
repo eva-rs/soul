@@ -1,7 +1,7 @@
 //! Blob-store глазами тура (`07 §6`): байты и метаданные для рендера,
 //! картинки тулов и модели — в `blobs` до записи события.
 
-use eva::handling::CallStep as _;
+use eva::handlers::CallStep as _;
 use std::collections::BTreeMap;
 
 use eva_protocol::{

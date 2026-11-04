@@ -8,7 +8,7 @@
 //! сеттеры меняют одно поле. По умолчанию `idempotent = parallel_safe = true`.
 //!
 //! `Module::run` загружает конфиг, выполняет `init`, ждёт звонков от soul и управляет
-//! остановкой через `eva::supervisor::Supervisor`. По умолчанию сокет —
+//! остановкой через `eva::rt::Components`. По умолчанию сокет —
 //! `$RUNTIME_DIRECTORY/module.sock` (иначе `/run/eva-<name>/module.sock`),
 //! ключ — `SecretString::credential("soul-key")`.
 //!
@@ -44,7 +44,7 @@ pub mod prelude {
     };
 }
 
-pub use eva::utils::SecretString;
+pub use eva::rt::cfg::SecretString;
 pub use eva_protocol::types::text::{Catalog, Catalogs, LocalizedText, Message};
 pub use eva_sdk_macros::{include_translations, msg};
 

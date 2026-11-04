@@ -12,7 +12,7 @@ use std::{
 use futures::{StreamExt as _, stream};
 use tokio::sync::Notify;
 
-use eva::{handling::CallStep, time::Timestamp};
+use eva::{handlers::CallStep, time::Timestamp};
 use eva_core::{Caller, Session, SessionMaker, service::AuxFut};
 use eva_protocol::{
     errors::{self, Aux, Generic},
@@ -134,14 +134,14 @@ macro_rules! reply {
         real!($session blobs_put)
     };
     ($segment:ident $endpoint:ident $session:ident) => {
-        eva::handling::step(|_| async { unimplemented!("operation is stubbed in this test soul") })
+        eva::handlers::step(|_| async { unimplemented!("operation is stubbed in this test soul") })
     };
 }
 
 macro_rules! real {
     ($session:ident $op:ident) => {{
         let state = $session.state.clone();
-        eva::handling::step(move |args| $op(state.clone(), args))
+        eva::handlers::step(move |args| $op(state.clone(), args))
     }};
 }
 

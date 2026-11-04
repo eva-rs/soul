@@ -4,7 +4,7 @@
 
 use std::{collections::BTreeMap, pin::pin, time::Duration};
 
-use eva::supervisor::SlaveRx;
+use eva::rt::components::SlaveRx;
 use eva_protocol::{
     errors::AuxResult,
     types::{memory::Kind, turn::TurnView},
@@ -166,7 +166,7 @@ async fn backfill<C: Components>(shared: &Shared<C>) {
     }
 }
 
-/// Компонент `Supervisor`: backfill эмбеддингов на старте, по событиям
+/// Фоновый компонент: backfill эмбеддингов на старте, по событиям
 /// памяти и раз в `BACKFILL_EVERY`, до `Shutdown`.
 pub async fn run<C: Components>(shared: Shared<C>, mut rx: SlaveRx) -> eyre::Result<()> {
     let mut events = shared.bus().subscribe();

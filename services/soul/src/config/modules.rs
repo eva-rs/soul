@@ -3,7 +3,7 @@
 
 use std::{collections::BTreeMap, path::PathBuf, time::Duration};
 
-use eva::{bytesize::ByteSize, data, time::HumanDuration, utils::SecretString};
+use eva::{bytesize::ByteSize, data, rt::cfg::SecretString, time::HumanDuration};
 
 use eva_protocol::types::{ModuleId, module::ServiceAddress};
 use eva_rpc::config::{Listen, UdsListen};

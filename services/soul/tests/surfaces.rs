@@ -6,7 +6,7 @@ mod common;
 use std::sync::atomic::Ordering;
 
 use common::{CLIENT, CLIENT2, OTHER, Outcome, SVC, outcome, service};
-use eva::handling::CallStep as _;
+use eva::handlers::CallStep as _;
 use eva_protocol::{
     errors::{Aux, Generic},
     requests::{

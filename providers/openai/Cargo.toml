@@ -7,7 +7,7 @@ description = "OpenAI-compatible Chat Completions (OpenRouter first) behind the 
 [dependencies]
 eva-protocol.workspace = true
 eva-core.workspace = true
-eva.workspace = true
+eva = { workspace = true, features = ["rt"] }
 serde.workspace = true
 serde_json.workspace = true
 futures.workspace = true

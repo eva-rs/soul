@@ -6,7 +6,7 @@ mod common;
 use std::{sync::atomic::Ordering, time::Duration};
 
 use common::{Harness, OTHER, Outcome, SVC, TestSession, outcome};
-use eva::handling::CallStep as _;
+use eva::handlers::CallStep as _;
 use eva_protocol::{
     errors::Generic,
     requests::{

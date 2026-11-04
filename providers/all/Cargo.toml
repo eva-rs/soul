@@ -16,9 +16,13 @@ eva-core.workspace = true
 eva.workspace = true
 serde.workspace = true
 serde_json.workspace = true
+log.workspace = true
 eva-provider-openai = { workspace = true, optional = true }
 eva-provider-mock = { workspace = true, optional = true }
 eva-provider-embed-local = { workspace = true, optional = true }
+
+[dev-dependencies]
+eva = { workspace = true, features = ["rt"] }
 
 [lints]
 workspace = true

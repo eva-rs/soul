@@ -20,7 +20,7 @@ use futures::StreamExt as _;
 use serde::{Serialize, de::DeserializeOwned};
 use tokio::{sync::watch, time::Instant};
 
-use eva::{fut::Fut, handling::CallStep};
+use eva::{fut::Fut, handlers::CallStep};
 use eva_core::{Session, service::op_name};
 use eva_protocol::{
     errors::{Aux, Generic},
@@ -295,7 +295,7 @@ where
 {
     type Output = Response<O, E>;
 
-    fn call(&mut self, args: A) -> impl Fut<Output = Self::Output> {
+    fn call(&mut self, args: A) -> impl Future<Output = Self::Output> + Send {
         let (link, op) = (self.link.clone(), self.op.clone());
         async move { link.run(move |session, _| op(session, args.clone())).await }
     }
@@ -315,7 +315,7 @@ where
 {
     type Output = Response<O, E>;
 
-    fn call(&mut self, args: A) -> impl Fut<Output = Self::Output> {
+    fn call(&mut self, args: A) -> impl Future<Output = Self::Output> + Send {
         let (link, method) = (self.link.clone(), self.method.clone());
         let params = codec::encode(&args);
         async move {
@@ -348,7 +348,7 @@ where
 {
     type Output = Response<O, E>;
 
-    fn call(&mut self, args: A) -> impl Fut<Output = Self::Output> {
+    fn call(&mut self, args: A) -> impl Future<Output = Self::Output> + Send {
         let (unwrap, wrap) = (self.unwrap, self.wrap);
         let (link, op) = (self.link.clone(), self.op.clone());
         async move {
@@ -384,7 +384,7 @@ where
 {
     type Output = Response<O, E>;
 
-    fn call(&mut self, args: A) -> impl Fut<Output = Self::Output> {
+    fn call(&mut self, args: A) -> impl Future<Output = Self::Output> + Send {
         let (link, op) = (self.link.clone(), self.op.clone());
         async move {
             let deadline = Instant::now() + CALL_RECONNECT_WAIT;

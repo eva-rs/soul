@@ -1,4 +1,4 @@
-//! Запуск модуля как приложения eva: конфиг, инициализация и Supervisor.
+//! Запуск модуля как приложения eva: конфиг, инициализация и Components.
 
 use std::{
     ffi::OsStr,
@@ -7,19 +7,20 @@ use std::{
 };
 
 use eva::{
-    cli::{App, NoArgs},
-    component_configs::{ComponentConfigs, IsComponentConfig},
     data,
-    supervisor::Supervisor,
+    rt::{
+        Components, Runtime,
+        cfg::{self, ComponentConfigs, IsComponentConfig, SecretString},
+        cli::NoArgs,
+    },
     time::HumanDuration,
-    utils::SecretString,
 };
 use eva_rpc::{ServiceListen, config::UdsListen};
 
 use crate::{Module, ServiceConfig, tool::BoxFuture};
 
 pub(crate) struct Initialization<S> {
-    register: Box<dyn FnOnce(App) -> App + Send>,
+    register: Box<dyn FnOnce(cfg::Builder) -> cfg::Builder + Send>,
     initialize: Box<dyn FnOnce(ComponentConfigs) -> BoxFuture<eyre::Result<S>> + Send>,
 }
 
@@ -38,7 +39,7 @@ impl Module {
         );
         let mut module = self.retype();
         module.initialization = Some(Initialization {
-            register: Box::new(move |app| app.require::<C>(&section)),
+            register: Box::new(move |cfg| cfg.required::<C>(&section)),
             initialize: Box::new(move |configs| {
                 let config = (*configs.get::<C>()).clone();
                 Box::pin(initialize(config))
@@ -52,16 +53,17 @@ impl<S: Send + Sync + 'static> Module<S> {
     /// Дефолты зависят от окончательного имени, поэтому вычисляются после всех сеттеров.
     pub fn run(mut self) -> eyre::Result<()> {
         let prefix = env_prefix(self.module_name())?;
-        let mut app = App::default()
-            .env_prefix(&prefix)
-            .optional::<ServiceDefaults>("module");
+        let mut runtime = Runtime::default().configure(|cfg| {
+            cfg.env_prefix(&prefix)
+                .optional::<ServiceDefaults>("module")
+        });
         let initialization = if let Some(init) = self.initialization.take() {
-            app = (init.register)(app);
+            runtime = runtime.configure(init.register);
             Some(init.initialize)
         } else {
             None
         };
-        app.run(move |_: NoArgs, configs: ComponentConfigs| async move {
+        runtime.run(move |_: NoArgs, configs: ComponentConfigs| async move {
             let config = configs
                 .get::<ServiceDefaults>()
                 .resolve(self.module_name())?;
@@ -69,7 +71,7 @@ impl<S: Send + Sync + 'static> Module<S> {
                 self.state = Some(Arc::new(initialize(configs.clone()).await?));
             }
             let listening = self.listen(&config).await?;
-            Supervisor::new(configs)
+            Components::new(configs)
                 .add::<ServiceDefaults>(move |_, mut shutdown| {
                     let listening = listening.clone();
                     async move {

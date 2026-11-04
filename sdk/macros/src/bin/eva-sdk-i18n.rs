@@ -1,6 +1,9 @@
 //! Извлечение msg! в POT; обновление переводов выполняет стандартный msgmerge.
 
-use eva::{cli::App, data, supervisor::Supervisor};
+use eva::{
+    data,
+    rt::{Components, Runtime},
+};
 use std::{
     collections::{BTreeMap, BTreeSet},
     path::{Path, PathBuf},
@@ -156,11 +159,11 @@ fn run(args: &Args) -> Result<(), String> {
     }
 }
 fn main() -> eyre::Result<()> {
-    App::default()
-        .optional::<ToolingConfig>("i18n")
+    Runtime::default()
+        .configure(|cfg| cfg.optional::<ToolingConfig>("i18n"))
         .run(async |args: Args, configs| {
             let (send, receive) = std::sync::mpsc::channel();
-            Supervisor::new(configs)
+            Components::new(configs)
                 .add::<ToolingConfig>(move |_, _| {
                     let args = args.clone();
                     let send = send.clone();

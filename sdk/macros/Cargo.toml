@@ -8,7 +8,7 @@ description = "Compile-time messages and gettext catalogs for Eva modules"
 proc-macro = true
 
 [dependencies]
-eva = { workspace = true, features = ["cli", "tokio"] }
+eva = { workspace = true, features = ["cli", "logforth", "yaml"] }
 eyre.workspace = true
 clap = { version = "4", features = ["derive"] }
 eva-protocol.workspace = true

@@ -3,7 +3,7 @@
 
 use std::{collections::BTreeMap, pin::pin, sync::Arc, time::Duration};
 
-use eva::{_priv::schemars::JsonSchema, time::HumanDuration, url::Url, utils::SecretString};
+use eva::{_priv::schemars::JsonSchema, rt::cfg::SecretString, time::HumanDuration, url::Url};
 use serde::de::DeserializeOwned;
 use tokio::time::Instant;
 

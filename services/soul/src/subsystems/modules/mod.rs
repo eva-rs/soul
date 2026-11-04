@@ -230,11 +230,11 @@ impl<C: Components> Listening<C> {
     }
 }
 
-/// Компонент `Supervisor`: слушатели подняты до старта компонентов, чтобы
+/// Фоновый компонент: слушатели подняты до старта компонентов, чтобы
 /// занятый сокет ронял процесс, а не одну подсистему.
 pub async fn run<C: Components>(
     listening: Listening<C>,
-    mut rx: eva::supervisor::SlaveRx,
+    mut rx: eva::rt::components::SlaveRx,
 ) -> eyre::Result<()> {
     rx.recv().await;
     listening.shutdown().await;

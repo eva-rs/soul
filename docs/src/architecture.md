@@ -79,7 +79,7 @@ let Surfaces::get::Ok { surface } = session
 - Вид операции задаётся через `#[flags(...)]`: без флага — чтение; `mutating` — повтор того же запроса в окне идемпотентности отдаёт сохранённый ответ; `stream` — `Ok` оборачивает поток `Items`; `upload` — `Args` несёт тело `ByteStream`. Допустимые флаги объявлены в `#[export(flags(mutating, stream, upload))]`; неизвестный флаг — ошибка компиляции.
 - `for_each_op!` передаёт колбэку плоские метаданные: `<accessor> { trait, client, methods: { <method> { flags, lifetimes, args, ok, err, output, docs, … } }, … }`. Имя accessor задаёт неймспейс, имя метода — операцию; колбэки сохраняют список lifetimes и допускают дополнительные поля метаданных.
 - RPC-метод — `<namespace>.<op>`; msgpack-RPC и будущие инструменты модели — обёртки над той же операцией, а не отдельные реализации. Контрактный тест проверяет, что вызов в процессе и через UDS даёт побайтно равные ответы.
-- Внутри `eva-soul` код разложен по слоям: `handling/` — хендлер на операцию, `impls/` — namespace-трейты над хендлерами (общий `for_each_op!(project)`), `state/policy/` — авторизация, `db/` — весь SQL, `convert/` — строки БД в типы протокола, `subsystems/` — компоненты `Supervisor`.
+- Внутри `eva-soul` код разложен по слоям: `handling/` — хендлер на операцию, `impls/` — namespace-трейты над хендлерами (общий `for_each_op!(project)`), `state/policy/` — авторизация, `db/` — весь SQL, `convert/` — строки БД в типы протокола, `subsystems/` — фоновые компоненты приложения.
 
 Каталог операций — в главе [Библиотечное API](api.md), wire-формат — в [Протоколе модулей](protocol.md).
 
@@ -149,16 +149,16 @@ Soul вычисляет эффективный trust при чтении и от
 - **Сид** на каждом старте, идемпотентный: `local`, `system`, их папки, `p0` и личность хозяина из конфига.
 - На старте все модули помечаются `offline` (сессии прошлого процесса мертвы), модули, которые молчат дольше `modules.offline_forget` (по умолчанию 7 дней), помечаются `forgotten` — на старте и дальше раз в час. На остановке, после закрытия сессий модулей, — `PRAGMA optimize` и `wal_checkpoint(PASSIVE)`.
 
-## Процесс и Supervisor
+## Процесс и компоненты
 
-Бинарь построен на фреймворке [`eva`](https://github.com/nerodono/eva): `eva::cli::App` собирает конфиг из файлов и `EVA_*`, `Supervisor` запускает компоненты, у каждого своя секция конфига.
+Бинарь построен на фреймворке [`eva`](https://github.com/nerodono/eva): `eva::rt::Runtime::run` разбирает аргументы процесса и собирает конфиг из файлов и `EVA_*`, `eva::rt::Components` запускает компоненты. Секции и источники конфигурации задаются через `Runtime::configure` и `cfg::Builder`.
 
 ```mermaid
 sequenceDiagram
   participant Main as main
   participant K as Soul::start
   participant L as Modules::listen
-  participant Sup as Supervisor
+  participant Sup as Components
   Main->>K: БД, миграции, сид, провайдеры, endpoint'ы рук
   Note over K: фоном дочитывает каталоги моделей провайдеров
   Main->>L: слушатели modules.listen, петли дозвона реестра

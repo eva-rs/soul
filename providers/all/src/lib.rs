@@ -63,7 +63,7 @@ pub async fn build(name: &str, config: ProviderConfig) -> Result<AnyProvider, Bu
             .map(|p| AnyProvider::EmbedLocal(Box::new(p)))
             .map_err(|e| failed(e.reason))?,
     };
-    eva::logging::info!(provider = name, models = provider.models().len(); "provider ready");
+    log::info!(provider = name, models = provider.models().len(); "provider ready");
     Ok(provider)
 }
 

@@ -8,7 +8,7 @@ use std::{
     time::{Duration, SystemTime},
 };
 
-use eva::{supervisor::SlaveRx, time::Timestamp};
+use eva::{rt::components::SlaveRx, time::Timestamp};
 use tokio::time::MissedTickBehavior;
 
 use eva_protocol::{

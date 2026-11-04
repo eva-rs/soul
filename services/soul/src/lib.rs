@@ -2,7 +2,7 @@
 //!
 //! Раскладка: `handling/` — хендлер на операцию, `impls/` — namespace-трейты
 //! над ними, `state/policy/` — авторизация, `db/` — весь SQL, `convert/` —
-//! строки БД в типы протокола, `subsystems/` — компоненты `Supervisor`.
+//! строки БД в типы протокола, `subsystems/` — фоновые компоненты приложения.
 
 pub mod bus;
 pub mod components;

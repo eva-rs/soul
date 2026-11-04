@@ -1,10 +1,15 @@
 //! Секция `module` конфига модуля (`06 §11`): сервис ждёт звонка от soul
 //! (`ServiceConfig`), клиент звонит ему сам (`ClientConfig`). Свои секции
-//! модуль регистрирует рядом в том же `App`.
+//! модуль регистрирует рядом в том же `cfg::Builder`.
 
 use std::time::Duration;
 
-use eva::{cli::App, data, time::HumanDuration, url::Url, utils::SecretString};
+use eva::{
+    data,
+    rt::cfg::{self, SecretString},
+    time::HumanDuration,
+    url::Url,
+};
 
 use eva_rpc::{ClientTls, ConnectError, ServiceListen};
 
@@ -26,8 +31,8 @@ pub struct ServiceConfig {
 
 impl ServiceConfig {
     /// Секция `module` без дефолта: адрес слушателя и ключ обязательны.
-    pub fn register(app: App) -> App {
-        app.require::<Self>("module")
+    pub fn register(cfg: cfg::Builder) -> cfg::Builder {
+        cfg.required::<Self>("module")
     }
 }
 
@@ -51,8 +56,8 @@ pub struct ClientConfig {
 
 impl ClientConfig {
     /// Секция `module` без дефолта: адрес soul и токен обязательны.
-    pub fn register(app: App) -> App {
-        app.require::<Self>("module")
+    pub fn register(cfg: cfg::Builder) -> cfg::Builder {
+        cfg.required::<Self>("module")
     }
 }
 

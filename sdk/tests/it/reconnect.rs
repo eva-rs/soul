@@ -1,7 +1,7 @@
 //! `run`: обрыв → реконнект с `hello.resume` и продолжением счётчика id, без
 //! повторной регистрации surface; `shutdown` закрывает соединение.
 
-use eva::handling::CallStep as _;
+use eva::handlers::CallStep as _;
 
 use std::{
     sync::{Arc, Mutex},

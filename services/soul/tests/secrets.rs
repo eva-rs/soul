@@ -1,4 +1,4 @@
-//! Секреты конфига soul (`00 §5`): `eva::utils::SecretString` в формах
+//! Секреты конфига soul (`00 §5`): `eva::rt::cfg::SecretString` в формах
 //! `{plaintext}` и `{file}`, читаются один раз на старте, хвостовой перевод
 //! строки срезается, ошибка чтения называет ключ; `Debug`/`Display` секрет
 //! не выдают. Здесь же — отказы старта по записям `modules.tokens` и
@@ -10,7 +10,7 @@ use std::{collections::BTreeMap, path::Path};
 
 use serde_json::json;
 
-use eva::utils::SecretString;
+use eva::rt::cfg::SecretString;
 use eva_hands::Psk;
 use eva_protocol::types::{ModuleId, module::ServiceAddress};
 use eva_rpc::{ServiceListen, ServiceListener, config::UdsListen};

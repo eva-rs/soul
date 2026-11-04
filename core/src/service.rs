@@ -4,7 +4,7 @@
 //! объединяет их в X-макро `for_each_op!`. Шаг операции —
 //! `CallStep<Args, Output = Response<Ok, Err>>`.
 
-use eva::{auto_impl, export, handling, trait_set};
+use eva::{auto_impl, export, handlers, trait_set};
 
 use eva_protocol::{errors::Aux, requests::Response};
 
@@ -179,7 +179,7 @@ pub trait SessionMaker: Send + Sync {
 
 /// Хендлер, чей `Output` — ответ операции.
 pub trait IsEndpoint<I, S>:
-    handling::Endpoint<I, S, Output = Response<Self::Ok, Self::Err>>
+    handlers::Endpoint<I, S, Output = Response<Self::Ok, Self::Err>>
 {
     type Ok;
     type Err;
@@ -187,7 +187,7 @@ pub trait IsEndpoint<I, S>:
 
 impl<I, S, O, E, Ep> IsEndpoint<I, S> for Ep
 where
-    Ep: handling::Endpoint<I, S, Output = Response<O, E>>,
+    Ep: handlers::Endpoint<I, S, Output = Response<O, E>>,
 {
     type Ok = O;
     type Err = E;
