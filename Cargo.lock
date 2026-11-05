@@ -781,7 +781,7 @@ dependencies = [
 [[package]]
 name = "eva"
 version = "0.1.0"
-source = "git+ssh://git@github.com/nerodono/eva.git#05944405c8432bcdcc3255ed6113b2eb45a692e0"
+source = "git+ssh://git@github.com/nerodono/eva.git#434682beb58bf9027bd391e5b1fdad1fb2c2bdcc"
 dependencies = [
  "eva-core 0.1.0 (git+ssh://git@github.com/nerodono/eva.git)",
  "eva-handlers",
@@ -800,7 +800,7 @@ dependencies = [
 [[package]]
 name = "eva-core"
 version = "0.1.0"
-source = "git+ssh://git@github.com/nerodono/eva.git#05944405c8432bcdcc3255ed6113b2eb45a692e0"
+source = "git+ssh://git@github.com/nerodono/eva.git#434682beb58bf9027bd391e5b1fdad1fb2c2bdcc"
 dependencies = [
  "ahash",
  "blake3",
@@ -827,7 +827,7 @@ dependencies = [
 [[package]]
 name = "eva-core-macros"
 version = "0.1.0"
-source = "git+ssh://git@github.com/nerodono/eva.git#05944405c8432bcdcc3255ed6113b2eb45a692e0"
+source = "git+ssh://git@github.com/nerodono/eva.git#434682beb58bf9027bd391e5b1fdad1fb2c2bdcc"
 dependencies = [
  "eva-macros-common",
 ]
@@ -835,7 +835,7 @@ dependencies = [
 [[package]]
 name = "eva-data"
 version = "0.1.0"
-source = "git+ssh://git@github.com/nerodono/eva.git#05944405c8432bcdcc3255ed6113b2eb45a692e0"
+source = "git+ssh://git@github.com/nerodono/eva.git#434682beb58bf9027bd391e5b1fdad1fb2c2bdcc"
 dependencies = [
  "compact_str",
  "eva-data-macros",
@@ -849,7 +849,7 @@ dependencies = [
 [[package]]
 name = "eva-data-macros"
 version = "0.1.0"
-source = "git+ssh://git@github.com/nerodono/eva.git#05944405c8432bcdcc3255ed6113b2eb45a692e0"
+source = "git+ssh://git@github.com/nerodono/eva.git#434682beb58bf9027bd391e5b1fdad1fb2c2bdcc"
 dependencies = [
  "eva-macros-common",
  "heck",
@@ -861,17 +861,18 @@ dependencies = [
 [[package]]
 name = "eva-handlers"
 version = "0.1.0"
-source = "git+ssh://git@github.com/nerodono/eva.git#05944405c8432bcdcc3255ed6113b2eb45a692e0"
+source = "git+ssh://git@github.com/nerodono/eva.git#434682beb58bf9027bd391e5b1fdad1fb2c2bdcc"
 dependencies = [
  "eva-data",
  "eva-handlers-macros",
  "fastrace",
+ "paste",
 ]
 
 [[package]]
 name = "eva-handlers-macros"
 version = "0.1.0"
-source = "git+ssh://git@github.com/nerodono/eva.git#05944405c8432bcdcc3255ed6113b2eb45a692e0"
+source = "git+ssh://git@github.com/nerodono/eva.git#434682beb58bf9027bd391e5b1fdad1fb2c2bdcc"
 dependencies = [
  "eva-macros-common",
  "proc-macro2",
@@ -882,7 +883,7 @@ dependencies = [
 [[package]]
 name = "eva-hands"
 version = "0.1.0"
-source = "git+ssh://git@github.com/eva-rs/hands.git#11ef84f6129d013c944106ec1eec3e2c5e367ae8"
+source = "git+ssh://git@github.com/eva-rs/hands.git#30d401412400b9773febf42a9215366eb6de4544"
 dependencies = [
  "eva",
  "eyre",
@@ -903,7 +904,7 @@ dependencies = [
 [[package]]
 name = "eva-macros-common"
 version = "0.1.0"
-source = "git+ssh://git@github.com/nerodono/eva.git#05944405c8432bcdcc3255ed6113b2eb45a692e0"
+source = "git+ssh://git@github.com/nerodono/eva.git#434682beb58bf9027bd391e5b1fdad1fb2c2bdcc"
 dependencies = [
  "proc-macro-crate",
  "proc-macro2",
@@ -1031,7 +1032,7 @@ dependencies = [
 [[package]]
 name = "eva-rt"
 version = "0.1.0"
-source = "git+ssh://git@github.com/nerodono/eva.git#05944405c8432bcdcc3255ed6113b2eb45a692e0"
+source = "git+ssh://git@github.com/nerodono/eva.git#434682beb58bf9027bd391e5b1fdad1fb2c2bdcc"
 dependencies = [
  "clap",
  "compact_str",
@@ -1118,7 +1119,7 @@ dependencies = [
 [[package]]
 name = "eva-utils"
 version = "0.1.0"
-source = "git+ssh://git@github.com/nerodono/eva.git#05944405c8432bcdcc3255ed6113b2eb45a692e0"
+source = "git+ssh://git@github.com/nerodono/eva.git#434682beb58bf9027bd391e5b1fdad1fb2c2bdcc"
 
 [[package]]
 name = "eventsource-stream"

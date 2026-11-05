@@ -429,38 +429,16 @@ macro_rules! live_step {
     };
 }
 
+#[eva::implement(eva_core::for_each_op, LiveSession)]
+#[extra(flags, ok)]
 macro_rules! live_impls {
-    ($(
-        $accessor:ident {
-            trait: $TraitPath:path,
-            client: $Client:path,
-            methods: {$(
-                $method:ident {
-                    flags: [$($flag:ident),*],
-                    lifetimes: [$($lt:lifetime),*],
-                    args: $Args:ty,
-                    ok: $Ok:ty,
-                    err: $Err:ty,
-                    output: $Output:ty,
-                    docs: [$($doc:literal),*],
-                    $($method_extra:tt)*
-                }
-            )*},
-            $($extra:tt)*
-        }
-    )*) => {$(
-        impl $TraitPath for LiveSession {$(
-            fn $method<$($lt),*>(&mut self) -> impl CallStep<$Args, Output = $Output> {
-                live_step!(
-                    [$($flag),*] self.link.clone(),
-                    format!("{}.{}", stringify!($accessor), op_name(stringify!($method))),
-                    |mut session: Rpc, args: $Args| async move {
-                        session.$accessor().inner_mut().$method().call(args).await
-                    }; $Ok
-                )
-            }
-        )*}
-    )*};
+    ($this:ident, $accessor:ident, $method:ident, $Args:ty, [$($flag:ident),*], $Ok:ty) => {
+        live_step!(
+            [$($flag),*] $this.link.clone(),
+            format!("{}.{}", stringify!($accessor), op_name(stringify!($method))),
+            |mut session: Rpc, args: $Args| async move {
+                session.$accessor().inner_mut().$method().call(args).await
+            }; $Ok
+        )
+    };
 }
-
-eva_core::for_each_op!(live_impls);

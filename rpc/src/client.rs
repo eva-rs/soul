@@ -520,33 +520,13 @@ macro_rules! step {
     }};
 }
 
+#[eva::implement(eva_core::for_each_op, RpcSession)]
+#[extra(flags, ok)]
 macro_rules! client_impls {
-    ($(
-        $accessor:ident {
-            trait: $TraitPath:path,
-            client: $Client:path,
-            methods: {$(
-                $method:ident {
-                    flags: [$($flag:ident),*],
-                    lifetimes: [$($lt:lifetime),*],
-                    args: $Args:ty,
-                    ok: $Ok:ty,
-                    err: $Err:ty,
-                    output: $Output:ty,
-                    docs: [$($doc:literal),*],
-                    $($method_extra:tt)*
-                }
-            )*},
-            $($extra:tt)*
-        }
-    )*) => {$(
-        impl $TraitPath for RpcSession {$(
-            fn $method<$($lt),*>(&mut self) -> impl CallStep<$Args, Output = $Output> {
-                let target = self.target(stringify!($accessor), stringify!($method));
-                step!([$($flag),*] target $Args, $Ok)
-            }
-        )*}
-    )*};
+    ($this:ident, $accessor:ident, $method:ident, $Args:ty, [$($flag:ident),*], $Ok:ty) => {{
+        let target = $this.target(stringify!($accessor), stringify!($method));
+        step!([$($flag),*] target $Args, $Ok)
+    }};
 }
 
 impl RpcSession {
@@ -561,5 +541,3 @@ impl RpcSession {
         &self.inner.caller
     }
 }
-
-eva_core::for_each_op!(client_impls);

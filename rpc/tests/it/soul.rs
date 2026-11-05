@@ -1,5 +1,5 @@
 //! Soul для тестов транспорта: несколько операций по-настоящему, остальное —
-//! заглушки; реализации трейтов неймспейсов порождает `for_each_op!` (`11 §8`).
+//! заглушки; `#[eva::implement]` собирает реализации по `for_each_op!` (`11 §8`).
 
 use std::{
     sync::{
@@ -12,7 +12,7 @@ use std::{
 use futures::{StreamExt as _, stream};
 use tokio::sync::Notify;
 
-use eva::{handlers::CallStep, time::Timestamp};
+use eva::time::Timestamp;
 use eva_core::{Caller, Session, SessionMaker, service::AuxFut};
 use eva_protocol::{
     errors::{self, Aux, Generic},
@@ -116,28 +116,6 @@ pub fn item(n: i64) -> TurnItem {
     }
 }
 
-/// Остальные операции не должны вызываться транспортными тестами.
-macro_rules! reply {
-    (surfaces create $session:ident) => {
-        real!($session surfaces_create)
-    };
-    (surfaces get $session:ident) => {
-        real!($session surfaces_get)
-    };
-    (surfaces list $session:ident) => {
-        real!($session surfaces_list)
-    };
-    (turns attach $session:ident) => {
-        real!($session turns_attach)
-    };
-    (blobs put $session:ident) => {
-        real!($session blobs_put)
-    };
-    ($segment:ident $endpoint:ident $session:ident) => {
-        eva::handlers::step(|_| async { unimplemented!("operation is stubbed in this test soul") })
-    };
-}
-
 macro_rules! real {
     ($session:ident $op:ident) => {{
         let state = $session.state.clone();
@@ -145,35 +123,28 @@ macro_rules! real {
     }};
 }
 
-macro_rules! test_session {
-    ($(
-        $accessor:ident {
-            trait: $TraitPath:path,
-            client: $Client:path,
-            methods: {$(
-                $method:ident {
-                    flags: [$($flag:ident),*],
-                    lifetimes: [$($lt:lifetime),*],
-                    args: $Args:ty,
-                    ok: $Ok:ty,
-                    err: $Err:ty,
-                    output: $Output:ty,
-                    docs: [$($doc:literal),*],
-                    $($method_extra:tt)*
-                }
-            )*},
-            $($extra:tt)*
-        }
-    )*) => {$(
-        impl $TraitPath for TestSession {$(
-            fn $method<$($lt),*>(&mut self) -> impl CallStep<$Args, Output = $Output> {
-                reply!($accessor $method self)
-            }
-        )*}
-    )*};
+/// Остальные операции не должны вызываться транспортными тестами.
+#[eva::implement(eva_core::for_each_op, TestSession)]
+macro_rules! reply {
+    ($session:ident, surfaces, create, $Args:ty) => {
+        real!($session surfaces_create)
+    };
+    ($session:ident, surfaces, get, $Args:ty) => {
+        real!($session surfaces_get)
+    };
+    ($session:ident, surfaces, list, $Args:ty) => {
+        real!($session surfaces_list)
+    };
+    ($session:ident, turns, attach, $Args:ty) => {
+        real!($session turns_attach)
+    };
+    ($session:ident, blobs, put, $Args:ty) => {
+        real!($session blobs_put)
+    };
+    ($session:ident, $segment:ident, $endpoint:ident, $Args:ty) => {
+        eva::handlers::step(|_| async { unimplemented!("operation is stubbed in this test soul") })
+    };
 }
-
-eva_core::for_each_op!(test_session);
 
 async fn surfaces_create(
     state: Arc<State>,
